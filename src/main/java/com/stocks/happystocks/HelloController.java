@@ -5,10 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Button;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.MenuButton;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 
 import yahoofinance.Stock;
 import yahoofinance.YahooFinance;
@@ -16,7 +13,10 @@ import yahoofinance.histquotes.HistoricalQuote;
 import yahoofinance.histquotes.Interval;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 
 import com.tictactec.ta.lib.Core;
 import com.tictactec.ta.lib.MInteger;
@@ -36,7 +36,8 @@ public class HelloController {
     private Button GoButton;
 
     @FXML
-    private MenuButton NumberOfDays;
+    private ComboBox<String> comboBox;
+
 
     @FXML
     private LineChart<Number, Number > lineChart;
@@ -44,28 +45,75 @@ public class HelloController {
     @FXML
     void getResult(ActionEvent event) {
         try {
-            Stock stock = YahooFinance.get(Tickr_code.getText());
-            stock.print();
+            LocalDate ld = StartDate.getValue();
+            Calendar from =  Calendar.getInstance();
+            from.set(ld.getYear(), ld.getMonthValue(), ld.getDayOfMonth());
 
-            /*NumberAxis xAxis = new NumberAxis();
-            xAxis.setLabel("No of employees");
+            Calendar today;
+            today = Calendar.getInstance();
+            today.set(Calendar.YEAR, 2021);
+            today.set(Calendar.MONTH, 12);
+            today.set(Calendar.DATE, 24);
 
-            NumberAxis yAxis = new NumberAxis();
-            yAxis.setLabel("Revenue per employee");
 
-            lineChart(xAxis, yAxis);*/
+
+            from = (Calendar) today.clone();
+            from.add(Calendar.YEAR, -1);
+
+
+            Stock stock = YahooFinance.get(Tickr_code.getText(), from, today, Interval.DAILY);
+
+            List<HistoricalQuote> stockHistory = stock.getHistory();
 
             XYChart.Series dataSeries1 = new XYChart.Series();
-            dataSeries1.setName("2014");
+            dataSeries1.setName("Closing Price");
 
-            dataSeries1.getData().add(new XYChart.Data( 1, 567));
-            dataSeries1.getData().add(new XYChart.Data( 5, 612));
-            dataSeries1.getData().add(new XYChart.Data(10, 800));
-            dataSeries1.getData().add(new XYChart.Data(20, 780));
-            dataSeries1.getData().add(new XYChart.Data(40, 810));
-            dataSeries1.getData().add(new XYChart.Data(80, 850));
+            for (int i=0; i<stockHistory.size(); ++i) {
+                dataSeries1.getData().add(new XYChart.Data(i, stockHistory.get(i).getClose()));
+            }
 
+            lineChart.getData().clear();
             lineChart.getData().add(dataSeries1);
+
+            double[] closePrice = new double[stockHistory.size()];
+            double[] out = new double[stockHistory.size()];
+            MInteger begin = new MInteger();
+            MInteger length = new MInteger();
+
+            for (int i = 0; i < stockHistory.size(); i++) {
+                closePrice[i] = (double) stockHistory.get(i).getClose().doubleValue();
+            }
+
+            Core c = new Core();
+            RetCode retCode = c.sma(0, closePrice.length - 1, closePrice, Integer.parseInt(comboBox.getValue()), begin, length, out);
+
+            if (retCode == RetCode.Success) {
+                System.out.println("Output Start Period: " + begin.value);
+                System.out.println("Output End Period: " + (begin.value + length.value - 1));
+
+                for (int i = begin.value; i < begin.value + length.value; i++) {
+                    StringBuilder line = new StringBuilder();
+                    line.append("Period #");
+                    line.append(i);
+                    line.append(" close=");
+                    line.append(closePrice[i]);
+                    line.append(" mov_avg=");
+                    line.append(out[i - begin.value]);
+                    System.out.println(line.toString());
+                }
+            } else {
+                System.out.println("Error");
+            }
+
+
+            XYChart.Series dataSeries2 = new XYChart.Series();
+            dataSeries2.setName("Moving Average");
+
+            for (int i=0; i<stockHistory.size(); ++i) {
+                dataSeries2.getData().add(new XYChart.Data(i, out[i]));
+            }
+
+            lineChart.getData().add(dataSeries2);
 
             /*Calendar today;
             Calendar from;
@@ -75,9 +123,9 @@ public class HelloController {
             today.set(Calendar.DATE, 24);
 
             from = (Calendar) today.clone();
-            from.add(Calendar.YEAR, -1);*/
+            from.add(Calendar.YEAR, -1);
 
-            /*Stock tsla = YahooFinance.get("TSLA", from, today, Interval.DAILY);
+            Stock tsla = YahooFinance.get(, from, today, Interval.DAILY);
 
             System.out.println(tsla.getHistory());
 
@@ -93,6 +141,8 @@ public class HelloController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+
 
         /*System.out.println("Hallo");
 
