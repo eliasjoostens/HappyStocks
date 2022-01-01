@@ -88,8 +88,10 @@ public class HelloController {
                 closePrice[i] = (double) stockHistory.get(i).getClose().doubleValue();
             }
 
+            int movingAveragePeriod = Integer.parseInt(comboBox.getValue());
+
             Core c = new Core();
-            RetCode retCode = c.sma(0, closePrice.length - 1, closePrice, Integer.parseInt(comboBox.getValue()), begin, length, out);
+            RetCode retCode = c.sma(0, closePrice.length - 1, closePrice, movingAveragePeriod, begin, length, out);
 
             if (retCode == RetCode.Success) {
                 System.out.println("Output Start Period: " + begin.value);
@@ -112,8 +114,9 @@ public class HelloController {
             XYChart.Series dataSeries2 = new XYChart.Series();
             dataSeries2.setName("Moving Average");
 
-            for (int i=0; i<stockHistory.size(); ++i) {
-                dataSeries2.getData().add(new XYChart.Data(i, out[i]));
+            for (int i=begin.value; i<stockHistory.size(); ++i) {
+                System.out.println( i);
+                dataSeries2.getData().add(new XYChart.Data(i, out[i-movingAveragePeriod+1]));
             }
 
             lineChart.getData().add(dataSeries2);
