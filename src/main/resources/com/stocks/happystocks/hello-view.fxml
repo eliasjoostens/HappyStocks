@@ -20,9 +20,9 @@
          <children>
             <Pane layoutX="153.0" layoutY="7.0" prefHeight="353.0" prefWidth="431.0">
                <children>
-                  <LineChart prefHeight="354.0" prefWidth="431.0">
+                  <LineChart fx:id="lineChart" prefHeight="354.0" prefWidth="431.0">
                     <xAxis>
-                      <CategoryAxis side="BOTTOM" />
+                      <NumberAxis side="BOTTOM" />
                     </xAxis>
                     <yAxis>
                       <NumberAxis side="LEFT" />

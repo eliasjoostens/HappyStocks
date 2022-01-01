@@ -2,6 +2,9 @@ package com.stocks.happystocks;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.MenuButton;
@@ -36,12 +39,35 @@ public class HelloController {
     private MenuButton NumberOfDays;
 
     @FXML
+    private LineChart<Number, Number > lineChart;
+
+    @FXML
     void getResult(ActionEvent event) {
         try {
             Stock stock = YahooFinance.get(Tickr_code.getText());
             stock.print();
 
-            Calendar today;
+            /*NumberAxis xAxis = new NumberAxis();
+            xAxis.setLabel("No of employees");
+
+            NumberAxis yAxis = new NumberAxis();
+            yAxis.setLabel("Revenue per employee");
+
+            lineChart(xAxis, yAxis);*/
+
+            XYChart.Series dataSeries1 = new XYChart.Series();
+            dataSeries1.setName("2014");
+
+            dataSeries1.getData().add(new XYChart.Data( 1, 567));
+            dataSeries1.getData().add(new XYChart.Data( 5, 612));
+            dataSeries1.getData().add(new XYChart.Data(10, 800));
+            dataSeries1.getData().add(new XYChart.Data(20, 780));
+            dataSeries1.getData().add(new XYChart.Data(40, 810));
+            dataSeries1.getData().add(new XYChart.Data(80, 850));
+
+            lineChart.getData().add(dataSeries1);
+
+            /*Calendar today;
             Calendar from;
             today = Calendar.getInstance();
             today.set(Calendar.YEAR, 2021);
@@ -49,7 +75,7 @@ public class HelloController {
             today.set(Calendar.DATE, 24);
 
             from = (Calendar) today.clone();
-            from.add(Calendar.YEAR, -1);
+            from.add(Calendar.YEAR, -1);*/
 
             /*Stock tsla = YahooFinance.get("TSLA", from, today, Interval.DAILY);
 
