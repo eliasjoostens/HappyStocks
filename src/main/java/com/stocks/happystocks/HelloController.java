@@ -45,25 +45,29 @@ public class HelloController {
     @FXML
     void getResult(ActionEvent event) {
         try {
-            LocalDate ld = StartDate.getValue();
-            Calendar from =  Calendar.getInstance();
-            from.set(ld.getYear(), ld.getMonthValue(), ld.getDayOfMonth());
-
             Calendar today;
             today = Calendar.getInstance();
-            today.set(Calendar.YEAR, 2021);
-            today.set(Calendar.MONTH, 12);
-            today.set(Calendar.DATE, 24);
 
+            LocalDate ld = StartDate.getValue();
 
+            Calendar from = (Calendar) today.clone();
+            from.set(Calendar.YEAR, ld.getYear());
+            from.set(Calendar.MONTH, ld.getMonthValue()- 1);
+            from.set(Calendar.DATE, ld.getDayOfMonth());
 
-            from = (Calendar) today.clone();
-            from.add(Calendar.YEAR, -1);
+            int y = today.get(Calendar.YEAR);
+            int m = today.get(Calendar.MONTH);
+            int d = today.get(Calendar.DAY_OF_MONTH);
 
+            System.out.println("year: " + y + "month: " + m + "day: " + d);
+
+            System.out.println("dag: " + ld.getDayOfMonth() + "maand: " + ld.getMonthValue() + "jaar: " + ld.getYear());
 
             Stock stock = YahooFinance.get(Tickr_code.getText(), from, today, Interval.DAILY);
 
             List<HistoricalQuote> stockHistory = stock.getHistory();
+
+            System.out.println(stockHistory);
 
             XYChart.Series dataSeries1 = new XYChart.Series();
             dataSeries1.setName("Closing Price");
@@ -99,12 +103,11 @@ public class HelloController {
                     line.append(closePrice[i]);
                     line.append(" mov_avg=");
                     line.append(out[i - begin.value]);
-                    System.out.println(line.toString());
+                    System.out.println(line);
                 }
             } else {
                 System.out.println("Error");
             }
-
 
             XYChart.Series dataSeries2 = new XYChart.Series();
             dataSeries2.setName("Moving Average");
@@ -141,8 +144,6 @@ public class HelloController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
 
         /*System.out.println("Hallo");
 
