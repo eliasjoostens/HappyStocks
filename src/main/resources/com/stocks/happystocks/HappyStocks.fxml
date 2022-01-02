@@ -26,7 +26,7 @@
               <Label layoutX="10.0" layoutY="77.0" prefHeight="24.0" prefWidth="70.0" text="TICKR code:" />
               <Label layoutX="10.0" layoutY="140.0" prefHeight="18.0" prefWidth="70.0" text="Date from:" />
               <Button fx:id="GoButton" layoutX="172.0" layoutY="275.0" mnemonicParsing="false" onAction="#refreshCharts" text="Go!" />
-              <Label layoutX="10.0" layoutY="198.0" prefHeight="24.0" prefWidth="133.0" text="Number of days" />
+              <Label layoutX="10.0" layoutY="198.0" prefHeight="24.0" prefWidth="133.0" text="Period MA &amp; RSI:" />
               <ComboBox fx:id="comboBox" layoutX="10.0" layoutY="222.0" prefHeight="26.0" prefWidth="136.0" promptText="Choose">
                   <items>
                       <FXCollections fx:factory="observableArrayList">

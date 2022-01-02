@@ -14,10 +14,7 @@ import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import yahoofinance.Stock;
 import yahoofinance.YahooFinance;
@@ -61,40 +58,48 @@ public class HappyStocksController {
     private NumberAxis YAxisBottom;
 
     public void initialize() {
-
         YAxisBottom.setAutoRanging(false);
         YAxisBottom.setLowerBound(0);
         YAxisBottom.setUpperBound(100);
         YAxisBottom.setTickUnit(25);
-
     }
 
     @FXML
     void refreshCharts(ActionEvent event) {
         try {
             initialize();
+            //Retrieve start date from datepicker
             Calendar today;
             today = Calendar.getInstance();
-
             LocalDate ld = StartDate.getValue();
+            if (ld == null) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Invalid date");
+                alert.setHeaderText("Attention!");
+                alert.setContentText("Please enter a valid date");
+                alert.showAndWait();
+                throw new Exception("Invalid date");
+            }
 
             Calendar from = (Calendar) today.clone();
             from.set(Calendar.YEAR, ld.getYear());
             from.set(Calendar.MONTH, ld.getMonthValue() - 1);
             from.set(Calendar.DATE, ld.getDayOfMonth());
 
-            int y = today.get(Calendar.YEAR);
-            int m = today.get(Calendar.MONTH);
-            int d = today.get(Calendar.DAY_OF_MONTH);
-
-            System.out.println("year: " + y + "month: " + m + "day: " + d);
-
+            //Invoke Yahoo API
             Stock stock = YahooFinance.get(Tickr_code.getText(), from, today, Interval.DAILY);
+            if (stock == null) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Unexisting stock");
+                alert.setHeaderText("Attention!");
+                alert.setContentText("Please enter a valid TICKR code");
+                alert.showAndWait();
+                throw new Exception("Invalid tickr");
+            }
 
             List<HistoricalQuote> stockHistory = stock.getHistory();
 
-            System.out.println(stockHistory);
-
+            //Show closing price chart
             XYChart.Series dataSeries1 = new XYChart.Series();
             dataSeries1.setName("Closing Price");
 
@@ -105,7 +110,6 @@ public class HappyStocksController {
             LineChartTop.getData().clear();
             LineChartTop.getData().add(dataSeries1);
             LineChartTop.setCreateSymbols(false);
-
 
             double[] closePrice = new double[stockHistory.size()];
             double[] out = new double[stockHistory.size()];
@@ -118,6 +122,7 @@ public class HappyStocksController {
 
             int movingAveragePeriod = Integer.parseInt(comboBox.getValue());
 
+            //Invoke talib for moving average calculation
             Core c = new Core();
             RetCode retCode = c.sma(0, closePrice.length - 1, closePrice, movingAveragePeriod, begin, length, out);
 
@@ -136,9 +141,18 @@ public class HappyStocksController {
                     System.out.println(line);
                 }
             } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error Dialog");
+                alert.setHeaderText("Look, an Error Dialog");
+                alert.setContentText("Ooops, there was an error!");
+
+                alert.showAndWait();
+
+
                 System.out.println("Error");
             }
 
+            //Invoke talib for rsi calculation
             double[] outrsi = new double[closePrice.length];
             double[] tempOutPut = new double[closePrice.length];
             begin.value = -1;
@@ -151,24 +165,24 @@ public class HappyStocksController {
                 outrsi[i] = tempOutPut[i - movingAveragePeriod];
             }
 
+            //Show moving average chart
             XYChart.Series dataSeries2 = new XYChart.Series();
             dataSeries2.setName("Moving Average");
 
             for (int i = begin.value; i < stockHistory.size(); ++i) {
-                System.out.println(i);
                 dataSeries2.getData().add(new XYChart.Data(i, out[i - movingAveragePeriod + 1]));
             }
-
             LineChartTop.getData().add(dataSeries2);
 
+            //Show RSI chart
             XYChart.Series dataSeries3 = new XYChart.Series();
             dataSeries3.setName("RSI");
 
             for (int i = movingAveragePeriod; i < stockHistory.size(); ++i) {
-                System.out.println(i);
                 dataSeries3.getData().add(new XYChart.Data(i, outrsi[i]));
             }
 
+            //Add horizontal markers for 30 and 70 on RSI chart
             XYChart.Series dataSeriesRSI30 = new XYChart.Series();
             dataSeriesRSI30.getData().add(new XYChart.Data(0, 30));
             dataSeriesRSI30.getData().add(new XYChart.Data(stockHistory.size()-1, 30));
@@ -183,7 +197,7 @@ public class HappyStocksController {
             LineChartBottom.getData().add(dataSeriesRSI70);
             LineChartBottom.setCreateSymbols(false);
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
