@@ -12,14 +12,13 @@ public class HelloApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
 
-        HelloController controller = new HelloController();
+        HappyStocksController controller = new HappyStocksController();
         FXMLLoader loader = new FXMLLoader();
         loader.setController(controller);
-        Parent root = loader.load(getClass().getResource("hello-view.fxml"));
+        Parent root = loader.load(getClass().getResource("HappyStocks.fxml"));
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.setTitle("HappyStocks!");
-//        controller.initialize();
         stage.show();
     }
 
