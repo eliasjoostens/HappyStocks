@@ -82,7 +82,7 @@
                         <!-- Default configuration for running with: mvn clean javafx:run -->
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>com.stocks.happystocks/com.stocks.happystocks.HelloApplication</mainClass>
+                            <mainClass>com.stocks.happystocks/com.stocks.happystocks.HappyStocksApp</mainClass>
                         </configuration>
                     </execution>
                 </executions>

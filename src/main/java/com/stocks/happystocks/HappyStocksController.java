@@ -104,6 +104,8 @@ public class HappyStocksController {
 
             LineChartTop.getData().clear();
             LineChartTop.getData().add(dataSeries1);
+            LineChartTop.setCreateSymbols(false);
+
 
             double[] closePrice = new double[stockHistory.size()];
             double[] out = new double[stockHistory.size()];
@@ -162,13 +164,24 @@ public class HappyStocksController {
             XYChart.Series dataSeries3 = new XYChart.Series();
             dataSeries3.setName("RSI");
 
-            for (int i = 0; i < stockHistory.size(); ++i) {
+            for (int i = movingAveragePeriod; i < stockHistory.size(); ++i) {
                 System.out.println(i);
                 dataSeries3.getData().add(new XYChart.Data(i, outrsi[i]));
             }
+
+            XYChart.Series dataSeriesRSI30 = new XYChart.Series();
+            dataSeriesRSI30.getData().add(new XYChart.Data(0, 30));
+            dataSeriesRSI30.getData().add(new XYChart.Data(stockHistory.size()-1, 30));
+
+            XYChart.Series dataSeriesRSI70 = new XYChart.Series();
+            dataSeriesRSI70.getData().add(new XYChart.Data(0, 70));
+            dataSeriesRSI70.getData().add(new XYChart.Data(stockHistory.size()-1, 70));
+
             LineChartBottom.getData().clear();
             LineChartBottom.getData().add(dataSeries3);
-
+            LineChartBottom.getData().add(dataSeriesRSI30);
+            LineChartBottom.getData().add(dataSeriesRSI70);
+            LineChartBottom.setCreateSymbols(false);
 
         } catch (IOException e) {
             e.printStackTrace();

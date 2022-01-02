@@ -8,7 +8,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class HelloApplication extends Application {
+public class HappyStocksApp extends Application {
     @Override
     public void start(Stage stage) throws IOException {
 
@@ -17,6 +17,7 @@ public class HelloApplication extends Application {
         loader.setController(controller);
         Parent root = loader.load(getClass().getResource("HappyStocks.fxml"));
         Scene scene = new Scene(root);
+        scene.getStylesheets().add(getClass().getResource("HappyStocks.css").toExternalForm());
         stage.setScene(scene);
         stage.setTitle("HappyStocks!");
         stage.show();
