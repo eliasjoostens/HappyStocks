@@ -1,6 +1,5 @@
 package com.stocks.happystocks;
 
-import java.io.IOException;
 import java.lang.String;
 import java.time.LocalDate;
 import java.util.Calendar;
@@ -15,17 +14,12 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
-import javafx.scene.layout.AnchorPane;
 import yahoofinance.Stock;
 import yahoofinance.YahooFinance;
 import yahoofinance.histquotes.HistoricalQuote;
 import yahoofinance.histquotes.Interval;
 
-
 public class HappyStocksController {
-
-    @FXML
-    private AnchorPane AnchorPaneLeft;
 
     @FXML
     private TextField Tickr_code;
@@ -34,22 +28,10 @@ public class HappyStocksController {
     private DatePicker StartDate;
 
     @FXML
-    private Button GoButton;
-
-    @FXML
     private ComboBox<String> comboBox;
 
     @FXML
-    private AnchorPane AnchorPaneRightTop;
-
-    @FXML
     private LineChart<Number, Number> LineChartTop;
-
-    @FXML
-    private NumberAxis YAxisTop;
-
-    @FXML
-    private AnchorPane AnchorPaneRightBottom;
 
     @FXML
     private LineChart<Number, Number> LineChartBottom;
